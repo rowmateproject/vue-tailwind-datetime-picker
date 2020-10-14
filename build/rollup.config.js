@@ -4,7 +4,7 @@ import commonjs from 'rollup-plugin-commonjs'
 export default {
   input: 'src/wrapper.js', // Jalur relatif to package.json
   output: {
-    name: 'VueTailwindPicker',
+    name: 'VueTailwindDatetimePicker',
     exports: 'named',
     extractCSS: false,
     globals: {

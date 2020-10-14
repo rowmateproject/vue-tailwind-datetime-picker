@@ -1,11 +1,11 @@
 // Import vue component
-import component from './vue-tailwind-picker.vue'
+import component from './vue-tailwind-datetime-picker.vue'
 
 // Declare install function executed by Vue.use()
 export function install(Vue) {
   if (install.installed) return
   install.installed = true
-  Vue.component('VueTailwindPicker', component)
+  Vue.component('VueTailwindDatetimePicker', component)
 }
 
 // Create module definition for Vue.use()

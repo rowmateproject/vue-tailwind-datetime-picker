@@ -387,6 +387,34 @@
                 </div>
               </transition-group>
             </div>
+            <div class="mt-2 p-5 bg-white border-t-2 shadow-xl" v-if="selecttime">
+              <div class="flex justify-center">
+                <select name="hours" class="bg-transparent text-xl appearance-none outline-none">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">10</option>
+                  <option value="12">12</option>
+                </select>
+                <span class="text-xl mr-3">:</span>
+                <select name="minutes" class="bg-transparent text-xl appearance-none outline-none mr-4">
+                  <option value="0">00</option>
+                  <option value="30">30</option>
+                </select>
+              </div>
+              <div class="flex justify-center">
+                <button class="bg-transparent text-xl appearance-none outline-none" :class="[1==1 ? theme.holiday : theme.background]">
+                  OK
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -404,6 +432,9 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
+// import 'dayjs/locale/de-ch'
+// dayjs.locale('de-ch')
+
 dayjs.extend(isToday)
 dayjs.extend(customParseFormat)
 dayjs.extend(isBetween)
@@ -414,15 +445,13 @@ dayjs.extend(isSameOrAfter)
 
 let handleOutsideClick
 
-// import './css/tailwind.css' // Development only
-
 /**
  * Author: kenhyuwa <wahyu.dhiraashandy8@gmail.com
  * Url: https://github.com/kenhyuwa
  **/
 
 export default {
-  name: 'VueTailwindPicker',
+  name: 'VueTailwindDatetimePicker',
   directives: {
     closable: {
       // https://github.com/TahaSh/vue-closable // resource
@@ -479,6 +508,16 @@ export default {
     },
   },
   props: {
+    lang: {
+      type: String,
+      required: false,
+      default: "de"
+    },
+    selecttime: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
     init: {
       type: Boolean,
       required: false,
@@ -491,7 +530,7 @@ export default {
     startDate: {
       type: String,
       required: false,
-      default: dayjs().format('YYYY-MM-DD'),
+      default: dayjs().format('YYYY-MM-DD-HH-MM'),
     },
     endDate: {
       type: String,
@@ -512,7 +551,7 @@ export default {
     formatDate: {
       type: String,
       required: false,
-      default: 'YYYY-MM-DD',
+      default: 'YYYY-MM-DD-HH-MM',
     },
     // Confused with this
     formatDisplay: {
@@ -580,20 +619,12 @@ export default {
   },
   data() {
     const startDatepicker = dayjs(this.startDate, this.formatDate)
-    // Featured for my own project
-    //   .add(
-    //   dayjs().hour() >= 20 ? 1 : 0,
-    //   'day',
-    // )
-    const endDatepicker = this.endDate
-      ? dayjs(this.endDate, this.formatDate)
-      : undefined
     const today = this.selectedDate && this.startDate < this.selectedDate
       ? dayjs(this.selectedDate, this.formatDate)
       : dayjs(startDatepicker, this.formatDate);
-    const months = Array.from(Array(12), (v, i) => {
-      return dayjs().month(i).format('MMMM')
-    })
+    const endDatepicker = this.endDate
+      ? dayjs(this.endDate, this.formatDate)
+      : undefined
     const years = Array.from(
       Array(
         this.endDate
@@ -606,19 +637,30 @@ export default {
     )
     const visibleMonth = false
     const visibleYear = false
-    const showPicker = false
+    const showPicker = true
     return {
       startDatepicker,
       endDatepicker,
-      today,
       visibleMonth,
-      months,
       visibleYear,
       years,
       showPicker,
     }
   },
   computed: {
+    today() {
+      dayjs.locale(this.lang)
+      const startDatepicker = dayjs(this.startDate, this.formatDate)
+      return this.selectedDate && this.startDate < this.selectedDate
+        ? dayjs(this.selectedDate, this.formatDate, 'de')
+        : dayjs(startDatepicker, this.formatDate, 'de');
+    },
+    months() {
+      dayjs.locale(this.lang)
+      return Array.from(Array(12), (v, i) => {
+        return dayjs().month(i).format('MMMM')
+      })
+    },
     days() {
       const customWeekend = this.startFromMonday ? 1 : 0
       return Array.from(Array(7), (v, i) => {
@@ -691,11 +733,19 @@ export default {
       }
     },
   },
+  created() {
+    const langobj = import(`dayjs/locale/${this.lang}`)
+    langobj.then(() => {
+      dayjs.locale(this.lang)
+      console.log("hi")
+    }).catch((e) => {
+      console.log(e)
+    })
+  },
   mounted() {
     if (this.init) this.emit()
   },
   methods: {
-    dayjs,
     emit() {
       this.$emit('change', this.today.format(this.formatDate))
     },
@@ -773,6 +823,14 @@ export default {
       this.emit()
       this.toggleMonth()
     },
+    setHour(hour) {
+      this.today = this.today.set('hour', hour)
+      this.emit()
+    },
+    setMinute(minute) {
+      this.today = this.today.set('minute', minute)
+      this.emit()
+    },
     setYear(year) {
       if (this.possibleDate(this.today.set('year', year))) {
         this.today = this.today.set('year', year)
@@ -791,6 +849,10 @@ export default {
   },
 }
 </script>
+
+<style>
+  @import './css/tailwind.css'; /* Development only */
+</style>
 
 <style scoped>
 #v-tailwind-picker {

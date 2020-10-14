@@ -1,19 +1,19 @@
 {
-  "name": "vue-tailwind-picker",
-  "version": "1.1.4",
+  "name": "vue-tailwind-datetime-picker",
+  "version": "1.0.0",
   "description": "Datepicker component for vue.js build with Tailwind CSS & dayjs date library",
-  "main": "dist/vue-tailwind-picker.umd.js",
-  "module": "dist/vue-tailwind-picker.esm.js",
-  "unpkg": "dist/vue-tailwind-picker.min.js",
+  "main": "dist/vue-tailwind-datetime-picker.umd.js",
+  "module": "dist/vue-tailwind-datetime-picker.esm.js",
+  "unpkg": "dist/vue-tailwind-datetime-picker.min.js",
   "browser": {
-    "./sfc": "src/vue-tailwind-picker.vue"
+    "./sfc": "src/vue-tailwind-datetime-picker.vue"
   },
   "scripts": {
-    "dev": "vue serve src/vue-tailwind-picker.vue",
+    "dev": "vue serve src/vue-tailwind-datetime-picker.vue",
     "build": "npm run build:umd & npm run build:es & npm run build:unpkg",
-    "build:umd": "rollup --config build/rollup.config.js --format umd --file dist/vue-tailwind-picker.umd.js",
-    "build:es": "rollup --config build/rollup.config.js --format es --file dist/vue-tailwind-picker.esm.js",
-    "build:unpkg": "rollup --config build/rollup.config.js --format iife --file dist/vue-tailwind-picker.min.js"
+    "build:umd": "rollup --config build/rollup.config.js --format umd --file dist/vue-tailwind-datetime-picker.umd.js",
+    "build:es": "rollup --config build/rollup.config.js --format es --file dist/vue-tailwind-datetime-picker.esm.js",
+    "build:unpkg": "rollup --config build/rollup.config.js --format iife --file dist/vue-tailwind-datetime-picker.min.js"
   },
   "files": [
     "dist/*"
@@ -37,11 +37,11 @@
   "homepage": "https://vue-tailwind-picker.netlify.app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kenhyuwa/vue-tailwind-picker.git"
+    "url": "https://github.com/rowmateproject/vue-tailwind-datetime-picker.git"
   },
   "bugs": {
-    "url": "https://github.com/kenhyuwa/vue-tailwind-picker/issues",
-    "email": "wahyu.dhiraashandy8@gmail.com"
+    "url": "https://github.com/rowmateproject/vue-tailwind-datetime-picker/issues",
+    "email": "mail@rowmate.org"
   },
   "devDependencies": {
     "rollup": "^1.17.0",
@@ -54,5 +54,8 @@
   "peerDependencies": {
     "dayjs": "^1.8.27",
     "tailwindcss": "^1.4.6"
+  },
+  "dependencies": {
+    "dayjs": "^1.9.3"
   }
 }
