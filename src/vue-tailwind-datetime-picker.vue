@@ -388,7 +388,7 @@
   </div>
 </template>
 
-<script>
+<script id="alpha">
 /**
  * Author: kenhyuwa <wahyu.dhiraashandy8@gmail.com
  * Url: https://github.com/kenhyuwa
@@ -396,26 +396,18 @@
 
 import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
 import isBetween from 'dayjs/plugin/isBetween'
+import dynamicLocale from 'dayjs-dynamic-locale'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
-const componentLoader = locales => {
-  locales.forEach((locale) => {
-    import(`dayjs/locale/${locale}`).then((x) => {
-      console.debug(x)
-    }).catch((e) => {
-      console.debug(e)
-    })
-  })
-}
-
 dayjs.extend(isToday)
-dayjs.extend(customParseFormat)
 dayjs.extend(isBetween)
+dayjs.extend(dynamicLocale)
+dayjs.extend(customParseFormat)
 dayjs.extend(localizedFormat)
 dayjs.extend(advancedFormat)
 dayjs.extend(isSameOrBefore)
@@ -424,6 +416,9 @@ dayjs.extend(isSameOrAfter)
 let handleOutsideClick
 
 export default {
+  beforeCreated() {
+    dayjs.locale(this.$props.lang)
+  },
   directives: {
     closable: {
       // https://github.com/TahaSh/vue-closable // resource
@@ -483,7 +478,7 @@ export default {
     lang: {
       type: String,
       required: false,
-      default: "de"
+      default: "it"
     },
     selecttime: {
       type: Boolean,
@@ -701,9 +696,6 @@ export default {
         this.visibleYear = next
       }
     }
-  },
-  created() {
-    componentLoader([this.$props.lang])
   },
   mounted() {
     if (this.init) {

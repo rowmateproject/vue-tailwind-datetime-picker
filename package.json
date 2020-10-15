@@ -13,7 +13,8 @@
     "build": "npm run build:umd & npm run build:es & npm run build:unpkg",
     "build:umd": "rollup --config build/rollup.config.js --format umd --file dist/vue-tailwind-datetime-picker.umd.js",
     "build:es": "rollup --config build/rollup.config.js --format es --file dist/vue-tailwind-datetime-picker.esm.js",
-    "build:unpkg": "rollup --config build/rollup.config.js --format iife --file dist/vue-tailwind-datetime-picker.min.js"
+    "build:unpkg": "rollup --config build/rollup.config.js --format iife --file dist/vue-tailwind-datetime-picker.min.js",
+    "test": "vue serve examples/demo.vue"
   },
   "files": [
     "dist/*"
@@ -52,10 +53,12 @@
     "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
-    "dayjs": "^1.8.27",
+    "dayjs": "^1.9.3",
     "tailwindcss": "^1.4.6"
   },
   "dependencies": {
-    "dayjs": "^1.9.3"
+    "dayjs": "^1.9.3",
+    "dayjs-dynamic-locale": "0.0.1",
+    "tailwindcss": "^1.9.2"
   }
 }

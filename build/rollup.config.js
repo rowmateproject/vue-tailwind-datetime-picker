@@ -1,17 +1,18 @@
-import vue from 'rollup-plugin-vue' // Menangani SFC .vue
-import buble from 'rollup-plugin-buble' // Transpile / polyfill dengan dukungan peramban yang masuk akal
+import vue from 'rollup-plugin-vue'
+import buble from 'rollup-plugin-buble'
 import commonjs from 'rollup-plugin-commonjs'
+
 export default {
-  input: 'src/wrapper.js', // Jalur relatif to package.json
+  input: 'src/wrapper.js',
   output: {
     name: 'VueTailwindDatetimePicker',
     exports: 'named',
     extractCSS: false,
     globals: {
-      dayjs: 'dayjs',
+      'dayjs': 'dayjs',
       'dayjs/plugin/isToday': 'dayjs/plugin/isToday',
-      'dayjs/plugin/customParseFormat': 'dayjs/plugin/customParseFormat',
       'dayjs/plugin/isBetween': 'dayjs/plugin/isBetween',
+      'dayjs/plugin/customParseFormat': 'dayjs/plugin/customParseFormat',
       'dayjs/plugin/localizedFormat': 'dayjs/plugin/localizedFormat',
       'dayjs/plugin/advancedFormat': 'dayjs/plugin/advancedFormat',
       'dayjs/plugin/isSameOrBefore': 'dayjs/plugin/isSameOrBefore',
@@ -21,8 +22,8 @@ export default {
   external: [
     'dayjs',
     'dayjs/plugin/isToday',
-    'dayjs/plugin/customParseFormat',
     'dayjs/plugin/isBetween',
+    'dayjs/plugin/customParseFormat',
     'dayjs/plugin/localizedFormat',
     'dayjs/plugin/advancedFormat',
     'dayjs/plugin/isSameOrBefore',
@@ -31,9 +32,9 @@ export default {
   plugins: [
     commonjs(),
     vue({
-      css: true, // Menyuntikkan css secara dinamis sebagai tag <style>
-      compileTemplate: true, // Konversi secara eksplisit templat ke render function
+      css: true,
+      compileTemplate: true,
     }),
-    buble(), // Transpile ke ES5
+    buble(),
   ],
 }
