@@ -10,6 +10,7 @@
     :style="`--bg-tailwind-picker: ${theme.background};`"
   >
     <slot></slot>
+
     <transition name="v-tailwind-picker">
       <div v-show="showPicker || inline">
         <div
@@ -31,17 +32,17 @@
             :style="{ backgroundColor: `var(--bg-tailwind-picker)` }"
           >
             <!--            Header of picker-->
-            <div id="v-tailwind-picker-header">
+            <div id="v-tailwind-picker-header" class="hidden">
               <div class="flex flex-row justify-center items-center px-2 py-1">
                 <div class="flex items-center text-2xl xl:text-3xl">
-                  {{ today.format('DD') }}
+                  {{ today.locale($props.lang).format('DD') }}
                 </div>
                 <div class="mx-1">
                   <div class="leading-none text-xxs">
-                    {{ today.format('dddd') }}
+                    {{ today.locale($props.lang).format('dddd') }}
                   </div>
                   <div class="leading-none text-xs">
-                    {{ today.format('MMMM YYYY') }}
+                    {{ today.locale($props.lang).format('MMMM YYYY') }}
                   </div>
                 </div>
               </div>
@@ -92,7 +93,7 @@
                     ]"
                     @click="toggleMonth()"
                   >
-                    {{ today.format('MMMM') }}
+                    {{ today.locale($props.lang).format('MMMM') }}
                   </div>
                   <div
                     class="flex-1 rounded overflow-hidden py-1 mr-2 ml-1 text-center cursor-pointer transition duration-150 ease-out"
@@ -151,16 +152,7 @@
                       :key="day"
                       class="w-1/7 flex justify-center"
                     >
-                      <div
-                        class="leading-relaxed text-sm"
-                        :class="[
-                          day === 'Sun'
-                            ? theme.picker.holiday
-                            : day === 'Fri'
-                            ? theme.picker.weekend
-                            : '',
-                        ]"
-                      >
+                      <div class="leading-relaxed text-sm">
                         {{ day }}
                       </div>
                     </div>
@@ -215,7 +207,7 @@
                           }"
                         ></div>
                         <div
-                          class="relative h-8 w-8 flex justify-center items-center overflow-hidden"
+                          class="relative flex justify-center items-center overflow-hidden"
                           :class="[
                             theme.picker.rounded,
                             possibleDate(date)
@@ -223,40 +215,21 @@
                               : 'cursor-not-allowed',
                           ]"
                         >
-                          <div
-                            v-if="possibleDate(date)"
-                            class="absolute inset-0 transition duration-150 ease-in-out border border-dotted border-transparent"
-                            :class="[
-                              theme.picker.rounded,
-                              possibleDate(date)
-                                ? `hover:${theme.picker.selected.border}`
-                                : '',
-                              date.$D === today.$D
-                                ? `${theme.picker.selected.background} shadow-xs`
-                                : '',
-                            ]"
-                            @click="changePicker(date)"
-                          ></div>
-                          <div
-                            class="flex justify-center items-center"
-                            :data-tailwind-datepicker="date.$d"
-                          >
-                            <div
+                          <div @click="changePicker(date)" :data-tailwind-datepicker="date.$d">
+                            <div class="flex justify-center items-center h-8 w-8"
                               :class="[
-                                (holidayDate(date) || date.day() === 0) &&
-                                date.$D !== today.$D
+                                possibleDate(date) && date.$D === today.$D
+                                  ? `${theme.picker.selected.background} z-10 text-white`
+                                  : `hover:${theme.picker.hovered.background}`,
+                                (holidayDate(date) || date.day() === 0) && date.$D !== today.$D
                                   ? theme.picker.holiday
                                   : '',
                                 date.day() === 5 && date.$D !== today.$D
                                   ? theme.picker.weekend
                                   : '',
                                 {
-                                  'z-10 text-white ':
-                                    date.$D === today.$D && possibleDate(date),
-                                },
-                                {
                                   'opacity-50': !possibleDate(date),
-                                },
+                                }
                               ]"
                             >
                               <span>{{ date.$D }}</span>
@@ -308,11 +281,7 @@
                       class="w-1/3 flex justify-center items-center px-2"
                     >
                       <div
-                        :class="[
-                          i === today.$M
-                            ? `${theme.picker.selected.border}`
-                            : `${theme.border} ${theme.picker.selected.hover}`,
-                        ]"
+                        :class="[i === today.$M  ? `${theme.picker.selected.border}` : `${theme.border} ${theme.picker.selected.hover}`]"
                         class="w-full flex justify-center items-center py-2 my-1 transition duration-150 ease-out rounded border cursor-pointer"
                         @click="setMonth(i)"
                       >
@@ -370,10 +339,7 @@
                   class="w-full flex flex-row space-x-1 mb-px"
                 >
                   <div class="inline-flex justify-end w-4">
-                    <span
-                      class="text-xs leading-none"
-                      :class="theme.picker.holiday"
-                    >
+                    <span class="text-xs leading-none" :class="theme.picker.holiday">
                       {{ dayjs(event.$events.date, formatDate).$D }}
                     </span>
                   </div>
@@ -423,6 +389,11 @@
 </template>
 
 <script>
+/**
+ * Author: kenhyuwa <wahyu.dhiraashandy8@gmail.com
+ * Url: https://github.com/kenhyuwa
+ **/
+
 import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
@@ -432,8 +403,15 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
-// import 'dayjs/locale/de-ch'
-// dayjs.locale('de-ch')
+const componentLoader = locales => {
+  locales.forEach((locale) => {
+    import(`dayjs/locale/${locale}`).then((x) => {
+      console.debug(x)
+    }).catch((e) => {
+      console.debug(e)
+    })
+  })
+}
 
 dayjs.extend(isToday)
 dayjs.extend(customParseFormat)
@@ -445,13 +423,7 @@ dayjs.extend(isSameOrAfter)
 
 let handleOutsideClick
 
-/**
- * Author: kenhyuwa <wahyu.dhiraashandy8@gmail.com
- * Url: https://github.com/kenhyuwa
- **/
-
 export default {
-  name: 'VueTailwindDatetimePicker',
   directives: {
     closable: {
       // https://github.com/TahaSh/vue-closable // resource
@@ -574,67 +546,69 @@ export default {
     dateRange: {
       type: Boolean,
       required: false,
-      default: false,
+      default: true,
     },
     // Next future
     autoClose: {
       type: Boolean,
       required: false,
-      default: true,
+      default: false,
     },
     startFromMonday: {
       type: Boolean,
       required: false,
-      default: false,
+      default: true,
     },
     theme: {
       type: Object,
       required: false,
       default: () => ({
-        background: '#FFFFFF',
+        background: '#ffffff',
         text: 'text-gray-700',
         border: 'border-gray-200',
         currentColor: 'text-gray-200',
         navigation: {
           background: 'bg-gray-100',
           hover: 'hover:bg-gray-200',
-          focus: 'bg-gray-200',
+          focus: 'bg-gray-200'
         },
         picker: {
-          rounded: 'rounded-full',
+          rounded: 'rounded',
           selected: {
-            background: 'bg-red-500',
-            border: 'border-red-500',
-            hover: 'hover:border-red-500',
+            background: 'bg-indigo-500',
+            border: 'border-transparent',
+            hover: 'hover:bg-gray-200'
           },
-          holiday: 'text-red-400',
-          weekend: 'text-green-400',
-          event: 'bg-indigo-500',
+          hovered: {
+            background: 'bg-gray-300'
+          },
+          holiday: 'text-gray-700',
+          weekend: 'text-gray-700',
+          event: 'bg-indigo-500'
         },
         event: {
-          border: 'border-gray-200',
-        },
-      }),
-    },
+          border: 'border-none'
+        }
+      })
+    }
   },
   data() {
     const startDatepicker = dayjs(this.startDate, this.formatDate)
-    const today = this.selectedDate && this.startDate < this.selectedDate
-      ? dayjs(this.selectedDate, this.formatDate)
-      : dayjs(startDatepicker, this.formatDate);
-    const endDatepicker = this.endDate
-      ? dayjs(this.endDate, this.formatDate)
-      : undefined
+
+    const endDatepicker = this.endDate ? dayjs(this.endDate, this.formatDate) : undefined
+    const today = this.selectedDate && this.startDate < this.selectedDate ? dayjs(this.selectedDate, this.formatDate) : dayjs(startDatepicker, this.formatDate);
+
+    const months = Array.from(Array(12), (v, i) => {
+      return dayjs().month(i).locale(this.$props.lang).format('MMMM')
+    })
+
     const years = Array.from(
-      Array(
-        this.endDate
-          ? endDatepicker.diff(today, 'year') + 1
-          : today.diff(today, 'year') + 36,
-      ),
+      Array(this.endDate ? endDatepicker.diff(today, 'year') + 1 : today.diff(today, 'year') + 5),
       (v, i) => {
         return today.add(i, 'year').$y
-      },
+      }
     )
+
     const visibleMonth = false
     const visibleYear = false
     const showPicker = true
@@ -643,30 +617,17 @@ export default {
       endDatepicker,
       visibleMonth,
       visibleYear,
-      years,
       showPicker,
+      months,
+      years,
+      today
     }
   },
   computed: {
-    today() {
-      dayjs.locale(this.lang)
-      const startDatepicker = dayjs(this.startDate, this.formatDate)
-      return this.selectedDate && this.startDate < this.selectedDate
-        ? dayjs(this.selectedDate, this.formatDate, 'de')
-        : dayjs(startDatepicker, this.formatDate, 'de');
-    },
-    months() {
-      dayjs.locale(this.lang)
-      return Array.from(Array(12), (v, i) => {
-        return dayjs().month(i).format('MMMM')
-      })
-    },
     days() {
       const customWeekend = this.startFromMonday ? 1 : 0
       return Array.from(Array(7), (v, i) => {
-        return dayjs()
-          .day(i + customWeekend)
-          .format('ddd')
+        return dayjs().day(i + customWeekend).locale(this.$props.lang).format('ddd')
       })
     },
     previousPicker() {
@@ -674,23 +635,27 @@ export default {
       const display = []
       const previous = this.today.date(0)
       const current = this.today.date(0)
+
       for (let i = 0; i <= current.day() - customWeekend; i++) {
         display.push(previous.subtract(i, 'day'))
       }
+
       return display.sort((a, b) => a.$d - b.$d)
     },
     currentPicker() {
       const customWeekend = this.startFromMonday ? 1 : 0
       const eventDate = this.eventDate.length > 0 ? this.eventDate : []
+
       return Array.from(
         Array(this.today.daysInMonth() - customWeekend),
         (v, i) => {
           const events = this.today.date(++i)
           events.$events = eventDate.find((o) => {
-            return o.date === events.format(this.formatDate)
+            return o.date === events.locale(this.$props.lang).format(this.formatDate)
           })
+
           return events
-        },
+        }
       )
     },
     nextPicker() {
@@ -698,9 +663,11 @@ export default {
       const display = []
       const previous = this.previousPicker.length
       const current = this.today.daysInMonth()
+
       for (let i = 1; i <= 42 - (previous + current) + customWeekend; i++) {
         display.push(this.today.date(i).add(1, 'month'))
       }
+
       return display
     },
     enableMonth() {
@@ -715,6 +682,7 @@ export default {
         const diff = this.startDatepicker.diff(endOf, 'day')
         return diff < this.today.daysInMonth() - this.today.$D
       }
+
       return true
     },
     visibleNext() {
@@ -722,8 +690,9 @@ export default {
         const startOf = this.today.add(1, 'month').startOf('month')
         return this.endDatepicker.diff(startOf, 'day') > 0
       }
+
       return true
-    },
+    }
   },
   watch: {
     showPicker(prev, next) {
@@ -731,19 +700,15 @@ export default {
         this.visibleMonth = next
         this.visibleYear = next
       }
-    },
+    }
   },
   created() {
-    const langobj = import(`dayjs/locale/${this.lang}`)
-    langobj.then(() => {
-      dayjs.locale(this.lang)
-      console.log("hi")
-    }).catch((e) => {
-      console.log(e)
-    })
+    componentLoader([this.$props.lang])
   },
   mounted() {
-    if (this.init) this.emit()
+    if (this.init) {
+      this.emit()
+    }
   },
   methods: {
     emit() {
@@ -845,8 +810,8 @@ export default {
     },
     onFeedBack() {
       this.showPicker = true
-    },
-  },
+    }
+  }
 }
 </script>
 
