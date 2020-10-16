@@ -478,7 +478,7 @@ export default {
     lang: {
       type: String,
       required: false,
-      default: "it"
+      default: "en"
     },
     selecttime: {
       type: Boolean,
