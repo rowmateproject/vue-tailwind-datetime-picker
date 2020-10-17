@@ -45,6 +45,8 @@
     "email": "mail@rowmate.org"
   },
   "devDependencies": {
+    "acorn": "^8.0.4",
+    "dayjs-dynamic-locale": "0.0.5",
     "rollup": "^1.17.0",
     "rollup-plugin-buble": "^0.19.8",
     "rollup-plugin-commonjs": "^10.0.1",
@@ -58,7 +60,6 @@
   },
   "dependencies": {
     "dayjs": "^1.9.3",
-    "dayjs-dynamic-locale": "0.0.1",
     "tailwindcss": "^1.9.2"
   }
 }

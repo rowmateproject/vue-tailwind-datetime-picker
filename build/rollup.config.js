@@ -17,6 +17,7 @@ export default {
       'dayjs/plugin/advancedFormat': 'dayjs/plugin/advancedFormat',
       'dayjs/plugin/isSameOrBefore': 'dayjs/plugin/isSameOrBefore',
       'dayjs/plugin/isSameOrAfter': 'dayjs/plugin/isSameOrAfter',
+      'dayjs-dynamic-locale/lib': 'dayjs-dynamic-locale/lib'
     },
   },
   external: [
@@ -28,6 +29,7 @@ export default {
     'dayjs/plugin/advancedFormat',
     'dayjs/plugin/isSameOrBefore',
     'dayjs/plugin/isSameOrAfter',
+    'dayjs-dynamic-locale/lib'
   ],
   plugins: [
     commonjs(),
