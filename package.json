@@ -1,6 +1,6 @@
 {
   "name": "vue-tailwind-datetime-picker",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "Datepicker component for vue.js build with Tailwind CSS & dayjs date library",
   "main": "dist/vue-tailwind-datetime-picker.umd.js",
   "module": "dist/vue-tailwind-datetime-picker.esm.js",

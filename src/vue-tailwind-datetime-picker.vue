@@ -1,12 +1,13 @@
 <template>
   <div
     ref="vTailwindPickerRef"
+    id="picker"
     class="relative select-none"
     v-closable="{
       handler: 'onAway',
-      exclude: ['currentPicker'],
+      exclude: ['currentPicker', 'time'],
     }"
-    @click="onFeedBack"
+    @click.prevent="onFeedBack"
     :style="`--bg-tailwind-picker: ${theme.background};`"
   >
     <slot></slot>
@@ -48,7 +49,7 @@
               </div>
             </div>
             <!--            Navigation of picker-->
-            <div class="relative p-1">
+            <div class="relative p-2 pb-3">
               <div
                 class="absolute inset-0"
                 :class="theme.navigation.background"
@@ -86,20 +87,20 @@
                 </div>
                 <div class="flex flex-1">
                   <div
-                    class="flex-1 rounded overflow-hidden py-1 ml-2 mr-1 text-center cursor-pointer transition duration-150 ease-out"
+                    class="flex-1 border-b-2 overflow-hidden py-1 ml-4 mr-6 text-center cursor-pointer transition duration-150 ease-out"
                     :class="[
                       enableMonth ? theme.navigation.focus : '',
-                      theme.navigation.hover,
+                      theme.navigation.hover, theme.time.border
                     ]"
                     @click="toggleMonth()"
                   >
                     {{ today.locale($props.lang).format('MMMM') }}
                   </div>
                   <div
-                    class="flex-1 rounded overflow-hidden py-1 mr-2 ml-1 text-center cursor-pointer transition duration-150 ease-out"
+                    class="flex-1 border-b-2 overflow-hidden py-1 mr-4 ml-6 text-center cursor-pointer transition duration-150 ease-out"
                     :class="[
                       enableYear ? theme.navigation.focus : '',
-                      theme.navigation.hover,
+                      theme.navigation.hover, theme.time.border
                     ]"
                     @click="toggleYear()"
                   >
@@ -140,12 +141,12 @@
               </div>
             </div>
             <!--            Body of picker-->
-            <div class="smooth-scrolling overflow-x-hidden overflow-y-auto">
+            <div class="overflow-x-hidden border-t border-b p-3 overflow-y-auto" :class="[theme.borders.accent]">
               <transition name="v-tailwind-picker-body">
                 <div v-if="!enableMonth && !enableYear" class="relative">
                   <div
                     class="flex flex-no-wrap py-2 border-b"
-                    :class="theme.border"
+                    :class="[theme.border, theme.borders.accent]"
                   >
                     <div
                       v-for="day in days"
@@ -165,7 +166,7 @@
                       class="w-1/7 flex justify-center my-2px cursor-not-allowed"
                       :class="[
                         i === previousPicker.length - 1 ? 'rounded-r-full' : '',
-                        theme.navigation.background,
+                        theme.navigation.backgroundoverlapse,
                       ]"
                     >
                       <div
@@ -245,7 +246,7 @@
                       class="w-1/7 flex justify-center my-2px cursor-not-allowed"
                       :class="[
                         date.$D === 1 ? 'rounded-l-full' : '',
-                        theme.navigation.background,
+                        theme.navigation.backgroundoverlapse,
                       ]"
                     >
                       <div
@@ -353,18 +354,19 @@
                 </div>
               </transition-group>
             </div>
-            <div class="mt-2 p-5 bg-white border-t-2 shadow-xl" v-if="selecttime">
-              <div class="flex justify-center">
-                <select name="hours" v-model="hours" class="bg-transparent text-xl appearance-none outline-none">
+            <div ref="time" class="mt-1 p-1 bg-white shadow-xl" v-if="selecttime">
+              <div class="flex justify-center border-b-2 pt-2 mx-24 mb-8 m-2" :class="[theme.time.border]">
+                <select name="hours" v-model="hours" class="bg-transparent font-medium text-xl appearance-none outline-none">
                   <option :value="(hour-1).toString()" @click="setHour(hour-1)" v-for="hour in 25" :key="hour">{{ pad(hour-1) }}</option>
                 </select>
-                <span class="text-xl mr-3">:</span>
-                <select name="minutes" class="bg-transparent text-xl appearance-none outline-none mr-4">
+                <span class="text-xl mr-1 ml-1">:</span>
+                <select name="minutes" class="bg-transparent text-xl font-medium appearance-none outline-none">
                   <option :value="(minute-1).toString()" @click="setMinute(minute-1)" :key="minute" v-for="minute in 60">{{ pad(minute-1) }}</option>
                 </select>
               </div>
-              <div class="flex justify-center">
-                <button class="bg-transparent text-xl appearance-none outline-none" @click="hide()" :class="[1==1 ? theme.holiday : theme.background]">
+              <hr>
+              <div class="flex justify-center mb-2 mt-4">
+                <button class="bg-transparent text-xl px-12 appearance-none outline-none" @click="hide()" :class="[`${theme.picker.selected.background} ${theme.picker.rounded} text-white`]">
                   OK
                 </button>
               </div>
@@ -440,7 +442,7 @@ export default {
 
           // We check to see if the clicked element is not
           // the dialog element and not excluded
-          if (clickedOnExcludedEl && vnode.context.autoClose) {
+          if (clickedOnExcludedEl && ( vnode.context.closed || vnode.context.autoClose)) {
             vnode.context[handler]()
           }
           if (!el.contains(e.target) && !clickedOnExcludedEl) {
@@ -533,7 +535,7 @@ export default {
       default: true,
     },
     // Next future
-    autoClose: {
+    autoCloseProp: {
       type: Boolean,
       required: false,
       default: false,
@@ -550,16 +552,23 @@ export default {
         background: '#ffffff',
         text: 'text-gray-700',
         border: 'border-gray-200',
+        time: {
+          border: 'border-purple-300'
+        },
+        borders: {
+          accent: 'border-purple-200'
+        },
         currentColor: 'text-gray-200',
         navigation: {
-          background: 'bg-gray-100',
+          background: 'bg-red-100',
+          backgroundoverlapse: 'bg-red-100',
           hover: 'hover:bg-gray-200',
           focus: 'bg-gray-200'
         },
         picker: {
           rounded: 'rounded',
           selected: {
-            background: 'bg-indigo-500',
+            background: 'bg-purple-700',
             border: 'border-transparent',
             hover: 'hover:bg-gray-200'
           },
@@ -568,7 +577,7 @@ export default {
           },
           holiday: 'text-gray-700',
           weekend: 'text-gray-700',
-          event: 'bg-indigo-500'
+          event: 'bg-purple-700'
         },
         event: {
           border: 'border-none'
@@ -595,7 +604,7 @@ export default {
 
     const visibleMonth = false
     const visibleYear = false
-    const showPicker = false
+    const showPicker = true
     return {
       startDatepicker,
       endDatepicker,
@@ -605,10 +614,18 @@ export default {
       months,
       years,
       hours: 12,
-      today
+      today,
+      closed: false
     }
   },
   computed: {
+    autoClose() {
+      if (!this.selecttime) {
+          return this.autoCloseProp
+      } else {
+        return false
+      }
+    },
     days() {
       const customWeekend = this.startFromMonday ? 1 : 0
       return Array.from(Array(7), (v, i) => {
@@ -696,6 +713,7 @@ export default {
   },
   methods: {
     hide() {
+      this.closed = true
       this.showPicker = false
     },
     pad(nr) {
@@ -799,15 +817,21 @@ export default {
       this.showPicker = false
     },
     onFeedBack() {
-      this.showPicker = true
+      if (!closed) {
+        this.showPicker = true
+      } else {
+        this.showPicker = false
+      }
     }
   }
 }
 </script>
 
-<!-- <style>
+<!-- 
+<style>
   @import './css/tailwind.css'; /* Development only */
-</style> -->
+</style>
+ -->
 
 <style scoped>
 #v-tailwind-picker {
