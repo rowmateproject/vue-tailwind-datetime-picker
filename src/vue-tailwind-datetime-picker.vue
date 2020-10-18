@@ -604,7 +604,7 @@ export default {
 
     const visibleMonth = false
     const visibleYear = false
-    const showPicker = true
+    const showPicker = false
     return {
       startDatepicker,
       endDatepicker,
@@ -827,7 +827,7 @@ export default {
 }
 </script>
 
-<!-- 
+<!--
 <style>
   @import './css/tailwind.css'; /* Development only */
 </style>
