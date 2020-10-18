@@ -355,28 +355,16 @@
             </div>
             <div class="mt-2 p-5 bg-white border-t-2 shadow-xl" v-if="selecttime">
               <div class="flex justify-center">
-                <select name="hours" class="bg-transparent text-xl appearance-none outline-none">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                  <option value="11">10</option>
-                  <option value="12">12</option>
+                <select name="hours" v-model="hours" class="bg-transparent text-xl appearance-none outline-none">
+                  <option :value="(hour-1).toString()" @click="setHour(hour-1)" v-for="hour in 25" :key="hour">{{ pad(hour-1) }}</option>
                 </select>
                 <span class="text-xl mr-3">:</span>
                 <select name="minutes" class="bg-transparent text-xl appearance-none outline-none mr-4">
-                  <option value="0">00</option>
-                  <option value="30">30</option>
+                  <option :value="(minute-1).toString()" @click="setMinute(minute-1)" :key="minute" v-for="minute in 60">{{ pad(minute-1) }}</option>
                 </select>
               </div>
               <div class="flex justify-center">
-                <button class="bg-transparent text-xl appearance-none outline-none" :class="[1==1 ? theme.holiday : theme.background]">
+                <button class="bg-transparent text-xl appearance-none outline-none" @click="hide()" :class="[1==1 ? theme.holiday : theme.background]">
                   OK
                 </button>
               </div>
@@ -416,6 +404,7 @@ dayjs.extend(isSameOrAfter)
 let handleOutsideClick
 
 export default {
+  name: 'VueTailwindDatetimePicker',
   beforeCreated() {
     dayjs.locale(this.$props.lang)
   },
@@ -497,7 +486,7 @@ export default {
     startDate: {
       type: String,
       required: false,
-      default: dayjs().format('YYYY-MM-DD-HH-MM'),
+      default: dayjs().format('YYYY-MM-DDTHH:mm'),
     },
     endDate: {
       type: String,
@@ -518,7 +507,7 @@ export default {
     formatDate: {
       type: String,
       required: false,
-      default: 'YYYY-MM-DD-HH-MM',
+      default: 'YYYY-MM-DDTHH:mm',
     },
     // Confused with this
     formatDisplay: {
@@ -615,6 +604,7 @@ export default {
       showPicker,
       months,
       years,
+      hours: 12,
       today
     }
   },
@@ -699,10 +689,18 @@ export default {
   },
   mounted() {
     if (this.init) {
+      this.setHour(this.hours)
+      this.setMinute(0)
       this.emit()
     }
   },
   methods: {
+    hide() {
+      this.showPicker = false
+    },
+    pad(nr) {
+      return ('0' + nr.toString()).slice(-2)
+    },
     emit() {
       this.$emit('change', this.today.format(this.formatDate))
     },
@@ -807,9 +805,9 @@ export default {
 }
 </script>
 
-<style>
+<!-- <style>
   @import './css/tailwind.css'; /* Development only */
-</style>
+</style> -->
 
 <style scoped>
 #v-tailwind-picker {
