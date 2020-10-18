@@ -15,7 +15,7 @@
       <div v-show="showPicker || inline">
         <div
           id="v-tailwind-picker"
-          class="bg-transparent mt-3 z-10"
+          class="bg-transparent mt-3 z-30"
           :class="[
             { 'inline-mode': inline },
             inline ? 'static' : 'absolute bottom-0 inset-x-0',
@@ -821,7 +821,7 @@ export default {
 }
 
 #v-tailwind-picker .w-88 {
-  width: 22rem;
+  width: 20rem;
 }
 
 #v-tailwind-picker .text-xxs {
