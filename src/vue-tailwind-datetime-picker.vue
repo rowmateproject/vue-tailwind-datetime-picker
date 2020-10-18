@@ -595,7 +595,7 @@ export default {
 
     const visibleMonth = false
     const visibleYear = false
-    const showPicker = true
+    const showPicker = false
     return {
       startDatepicker,
       endDatepicker,
